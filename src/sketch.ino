@@ -21,17 +21,25 @@
 Steering::EncoderSettings enSettingsR = {RightEncoderPin, EncoderSlots};
 Steering::EncoderSettings enSettingsL = {LeftEncoderPin, EncoderSlots};
 
+Steering::MotorSettings mSettingsR = {E1, I1, I2};
+Steering::MotorSettings mSettingsL = {E2, I3, I4};
+
 Steering::Encoder encoderRight(enSettingsR);
 Steering::Encoder encoderLeft(enSettingsL);
 
+Steering::Motor motorRight(mSettingsR, enSettingsR);
+Steering::Motor motorLeft(mSettingsL, enSettingsL);
+
 ros::NodeHandle  nh;
 
-std_msgs::Int16 encoderMsg;
-ros::Publisher pubEncoderRight("encoder/right" ,  &encoderMsg);
-ros::Publisher pubEncoderLeft("encoder/left" ,  &encoderMsg);
+std_msgs::Int16 encoderMsgL;
+std_msgs::Int16 encoderMsgR;
+ros::Publisher pubEncoderRight("encoder/right" ,  &encoderMsgR);
+ros::Publisher pubEncoderLeft("encoder/left" ,  &encoderMsgL);
 
 
-int count = 0;
+volatile int countL = 0;
+volatile int countR = 0;
 void setup()
 { 
     attachInterrupt(0, encoderRightISR, CHANGE); 
@@ -42,18 +50,20 @@ void setup()
 }
 
 void loop(){
-  
-    count = encoderLeft.getCount();
-    encoderMsg.data = count;
-    pubEncoderLeft.publish(&encoderMsg);
-
-    count = encoderRight.getCount();
-    encoderMsg.data = count;
-    pubEncoderRight.publish(&encoderMsg);    
+    motorRight.forward();
+    motorLeft.forward();
     
+    countR = encoderRight.getCount();
+    encoderMsgR.data = countR;
+    pubEncoderRight.publish(&encoderMsgR);
+
+    countL = encoderLeft.getCount();
+    encoderMsgL.data = countL;
+    pubEncoderLeft.publish(&encoderMsgL);
+
     nh.spinOnce();
     delay(10);
-
+    
 }
 
 void encoderRightISR()
@@ -63,5 +73,5 @@ void encoderRightISR()
 
 void encoderLeftISR()
 {
-    encoderRight.isr();
+    encoderLeft.isr();
 }

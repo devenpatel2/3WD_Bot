@@ -1,4 +1,4 @@
-#include "SpeedEncoder/SpeedEncoder.h"
+#include "SpeedEncoder.h"
 #include <Arduino.h>
 
 namespace Steering{

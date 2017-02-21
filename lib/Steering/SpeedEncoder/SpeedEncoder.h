@@ -19,7 +19,7 @@ namespace Steering{
             uchar _pin ;
             volatile int _count;
             int _lastCount;
-            Direction _direction;
+            volatile Direction _direction;
             bool _rotating;
             bool _isr_set;
         

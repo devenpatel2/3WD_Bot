@@ -23,8 +23,8 @@ Steering::EncoderSettings enSettingsL = {LeftEncoderPin, EncoderSlots};
 Steering::MotorSettings mSettingsR = {E1, I1, I2};
 Steering::MotorSettings mSettingsL = {E2, I3, I4};
 
-Steering::Encoder encoderRight(enSettingsR);
-Steering::Encoder encoderLeft(enSettingsL);
+//Steering::Encoder encoderRight(enSettingsR);
+//Steering::Encoder encoderLeft(enSettingsL);
 
 Steering::Motor motorRight(mSettingsR, enSettingsR);
 Steering::Motor motorLeft(mSettingsL, enSettingsL);
@@ -39,7 +39,7 @@ bool forward = true;
 volatile int countL = 0;
 volatile int countR = 0;
 unsigned long previousMillis = 0;     
-const long interval = 10000;           
+const long interval = 2000;           
 void setup()
 { 
     attachInterrupt(0, encoderRightISR, CHANGE); 
@@ -55,21 +55,28 @@ void loop(){
     if (currentMillis - previousMillis >= interval) {        
         previousMillis = currentMillis; 
         if (forward){
+            motorRight.stop();
+            motorLeft.stop();
+            delay(5);
             motorRight.forward();
             motorLeft.forward();
             forward = false;
         }
         else {
+            
+            motorRight.stop();
+            motorLeft.stop();
+            delay(5);
             motorLeft.reverse();
             motorRight.reverse();
             forward = true;
         }
     }
-    countR = encoderRight.getCount();
+    countR = motorRight.encoder->getCount();
     encoderMsgR.data = countR;
     pubEncoderRight.publish(&encoderMsgR);
 
-    countL = encoderLeft.getCount();
+    countL = motorLeft.encoder->getCount();
     encoderMsgL.data = countL;
     pubEncoderLeft.publish(&encoderMsgL);
 
@@ -80,10 +87,10 @@ void loop(){
 
 void encoderRightISR()
 {
-    encoderRight.isr();
+    motorRight.encoder->isr();
 }
 
 void encoderLeftISR()
 {
-    encoderLeft.isr();
+    motorLeft.encoder->isr();
 }

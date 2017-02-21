@@ -15,8 +15,6 @@ namespace Steering{
             void reverse();
             void reverse(uchar speed);
             void stop();
-
-        protected:
             Encoder *encoder;
 
         private:

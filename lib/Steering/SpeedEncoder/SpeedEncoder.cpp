@@ -19,13 +19,9 @@ namespace Steering{
      
     }
 
-    Encoder::Encoder(const EncoderSettings encoderSetting){
-        _count = 0;
-        _lastCount = 1;
-        _rotating = false;
-        _isr_set = false;    
-        _pin = encoderSetting.encoderPin;
-        _direction = FORWARD;
+    Encoder::Encoder(const EncoderSettings encoderSetting)
+    :_count(0), _lastCount(1), _rotating(false), _isr_set(false), _pin(encoderSetting.encoderPin), _direction(FORWARD){
+        
         pinMode(_pin, INPUT); 
         // turn on pullup resistors
         digitalWrite(_pin, HIGH);

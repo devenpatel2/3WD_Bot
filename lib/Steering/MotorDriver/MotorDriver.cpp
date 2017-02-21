@@ -3,16 +3,15 @@
 
 namespace Steering{
     
-    Motor::Motor(const MotorSettings motorSettings, const EncoderSettings encoderSettings){
-        _mtSettings = motorSettings;
+    Motor::Motor(const MotorSettings motorSettings, const EncoderSettings encoderSettings)
+    :_mtSettings(motorSettings), encoder(new Encoder(encoderSettings)){
         pinMode(_mtSettings.enable, OUTPUT);
         pinMode(_mtSettings.input1, OUTPUT);
         pinMode(_mtSettings.input2, OUTPUT);
-        encoder = new Encoder(encoderSettings);
     }
     
-    Motor::Motor(const MotorSettings motorSettings){
-        _mtSettings = motorSettings;
+    Motor::Motor(const MotorSettings motorSettings)
+    :_mtSettings(motorSettings){
         pinMode(_mtSettings.enable, OUTPUT);
         pinMode(_mtSettings.input1, OUTPUT);
         pinMode(_mtSettings.input2, OUTPUT);

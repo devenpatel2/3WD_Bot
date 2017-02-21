@@ -32,7 +32,7 @@ namespace Steering{
       
     }
 
-    int Encoder::getCount(){
+    int Encoder::count(){
         _rotating = true;  // reset the debouncer
             if (_lastCount != _count) {
             _lastCount = _count;

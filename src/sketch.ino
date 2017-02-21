@@ -72,11 +72,11 @@ void loop(){
             forward = true;
         }
     }
-    countR = motorRight.encoder->getCount();
+    countR = motorRight.encoder->count();
     encoderMsgR.data = countR;
     pubEncoderRight.publish(&encoderMsgR);
 
-    countL = motorLeft.encoder->getCount();
+    countL = motorLeft.encoder->count();
     encoderMsgL.data = countL;
     pubEncoderLeft.publish(&encoderMsgL);
 

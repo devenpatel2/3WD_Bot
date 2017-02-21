@@ -35,6 +35,16 @@ namespace Steering{
         _rightWheel.stop();
     }
 
+    void Steer::left(){
+        _leftWheel.reverse();
+        _rightWheel.forward();
+    }
+    
+    void Steer::right(){
+        _rightWheel.reverse();
+        _leftWheel.forward();
+    }
+
     float Steer::distanceTravelled(){
 
         return (_leftWheel.distance() + _rightWheel.distance())/2.0;

@@ -1,5 +1,5 @@
 #pragma once
-
+# define M_PI           3.14152 /* pi */
 typedef unsigned char uchar;
 
 namespace Steering{

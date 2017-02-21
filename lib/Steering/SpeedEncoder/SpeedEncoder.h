@@ -6,7 +6,7 @@ namespace Steering{
 
         public:
 
-            Encoder(EncoderSettings encoderSettings);
+            Encoder(const EncoderSettings encoderSettings);
             int count();
             void setDirection(Direction);
             Direction getDirection();

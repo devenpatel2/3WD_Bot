@@ -6,9 +6,9 @@ namespace Steering{
 
         public:
             //for motor with encoder
-            Motor(MotorSettings motorSettings, EncoderSettings encoderSettings);
+            Motor(const MotorSettings motorSettings, const EncoderSettings encoderSettings);
             // for motor without encoder
-            Motor(MotorSettings motorSettings);
+            Motor(const MotorSettings motorSettings);
             ~Motor();
             void forward();
             void forward(uchar speed);

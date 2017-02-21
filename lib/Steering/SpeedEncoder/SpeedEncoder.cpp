@@ -19,7 +19,7 @@ namespace Steering{
      
     }
 
-    Encoder::Encoder(EncoderSettings encoderSetting){
+    Encoder::Encoder(const EncoderSettings encoderSetting){
         _count = 0;
         _lastCount = 1;
         _rotating = false;

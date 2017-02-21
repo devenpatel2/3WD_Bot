@@ -30,6 +30,7 @@ float wheelRadius = 3.5;
 Steering::Wheel wheelRight(wheelRadius, mSettingsR, enSettingsR);
 Steering::Wheel wheelLeft(wheelRadius, mSettingsL, enSettingsL);
 
+
 ros::NodeHandle  nh;
 
 std_msgs::Int16 encoderMsg;
@@ -41,8 +42,6 @@ ros::Publisher pubRightWheel("right/distance" ,  &distanceMsg);
 ros::Publisher pubLeftWheel("left/distance" ,  &distanceMsg);
 
 bool forward = true;
-volatile int countL = 0;
-volatile int countR = 0;
 unsigned long previousMillis = 0;     
 const long interval = 2000;           
 void setup()

@@ -6,7 +6,9 @@
 namespace Steering{
     class Wheel : public Motor{
         public :    
+            // for wheel with speed encoder
             Wheel(float radius, MotorSettings motorSettings, EncoderSettings encoderSettings);
+            //for wheel without encoder
             Wheel(float radius, MotorSettings motorSettings);
             float distance();
 

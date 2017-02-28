@@ -4,7 +4,7 @@
 namespace Steering{
     class Steer{
         public:
-            Steer(float axleTrack, const Wheel &wheelLeft, const Wheel &wheelRight);
+            Steer(float axleTrack, const Wheel &leftWheel, const Wheel &rightWheel);
             void forward();
             void forward(float distance);
             void reverse();

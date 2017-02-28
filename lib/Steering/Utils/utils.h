@@ -16,4 +16,16 @@ namespace Steering{
         uchar encoderPin;
         int countPerRevolution ;
     };
+
+    struct Point{
+        float x;
+        float y;
+    };
+    
+    struct Pose{
+        float x;
+        float y;
+        float theta;
+    };
 }
+

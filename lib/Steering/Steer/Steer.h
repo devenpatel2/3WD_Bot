@@ -18,8 +18,8 @@ namespace Steering{
             float angle();
         
         private:
-            Wheel _leftWheel, _rightWheel;
-            float _axleTrack;
+            Wheel m_leftWheel, m_rightWheel;
+            float m_axleTrack;
     };
 //namespace Steering
 };

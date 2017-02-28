@@ -14,7 +14,7 @@ namespace Steering{
 
         private :
 
-            float _distancePerRevolution;
+            float m_distancePerRevolution;
     };
 // namespace Steering
 };

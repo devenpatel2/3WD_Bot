@@ -19,8 +19,8 @@ namespace Steering{
 
         private:
 
-            MotorSettings _mtSettings;
-            EncoderSettings _enSettings;
+            MotorSettings m_mtSettings;
+            EncoderSettings m_enSettings;
     };
 //namespace Steering
 };

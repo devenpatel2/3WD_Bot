@@ -4,49 +4,49 @@
 namespace Steering{
 
     void Encoder::isr(){
-        if ( _rotating ) delay (1);  // wait a little until the bouncing is done
+        if (m_rotating ) delay (1);  // wait a little until the bouncing is done
 
         // Test transition, did things really change? 
-        if( digitalRead(_pin) != _isr_set ) {  // debounce once more
-            _isr_set = ! _isr_set;
+        if( digitalRead(m_pin) != m_isr_set ) {  // debounce once more
+           m_isr_set = !m_isr_set;
 
             // adjust counter 
-            if ( _isr_set  ) 
-                _count = _count + _direction;
+            if ( m_isr_set  ) 
+               m_count = m_count + m_direction;
 
-            _rotating = false;  // no more debouncing until loop() hits again
+           m_rotating = false;  // no more debouncing until loop() hits again
         }  
      
     }
 
     Encoder::Encoder(const EncoderSettings encoderSetting)
-    :_count(0), _lastCount(1), _rotating(false), _isr_set(false), _pin(encoderSetting.encoderPin), _direction(FORWARD){
+    :m_count(0), m_lastCount(1), m_rotating(false), m_isr_set(false), m_pin(encoderSetting.encoderPin), m_direction(FORWARD){
         
-        pinMode(_pin, INPUT); 
+        pinMode(m_pin, INPUT); 
         // turn on pullup resistors
-        digitalWrite(_pin, HIGH);
+        digitalWrite(m_pin, HIGH);
       
     }
 
     int Encoder::count(){
-        _rotating = true;  // reset the debouncer
-            if (_lastCount != _count) {
-            _lastCount = _count;
+       m_rotating = true;  // reset the debouncer
+            if (m_lastCount != m_count) {
+           m_lastCount = m_count;
         }
-        return (int)_count;
+        return (int)m_count;
     }
 
     void Encoder::setDirection(Direction direction){
-        _direction = direction;
+       m_direction = direction;
     }
 
     Direction Encoder::getDirection(){
-        return _direction;
+        return m_direction;
     }
 
     void Encoder::resetCount(){
-        _count = 0;
-        _lastCount =1;
+       m_count = 0;
+       m_lastCount =1;
 
     }
 //namespace Steering 

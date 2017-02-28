@@ -16,12 +16,12 @@ namespace Steering{
 
         private:
 
-            uchar _pin ;
-            volatile int _count;
-            int _lastCount;
-            volatile Direction _direction;
-            bool _rotating;
-            bool _isr_set;
+            uchar m_pin ;
+            volatile int m_count;
+            int m_lastCount;
+            volatile Direction m_direction;
+            bool m_rotating;
+            bool m_isr_set;
         
     };
 // namespace Steering

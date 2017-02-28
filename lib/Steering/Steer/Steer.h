@@ -1,5 +1,6 @@
 #pragma once
 #include "Wheel/Wheel.h"
+#include "Utils/utils.h"
 
 namespace Steering{
     class Steer{
@@ -16,10 +17,13 @@ namespace Steering{
             void stop();
             float distanceTravelled();
             float angle();
-        
+            Pose getPose();
+            
         private:
             Wheel m_leftWheel, m_rightWheel;
             float m_axleTrack;
+            Pose m_previousPose, m_currentPose;
+            
     };
 //namespace Steering
 };

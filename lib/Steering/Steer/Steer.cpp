@@ -1,8 +1,10 @@
 #include "Steer.h"
-
+#include "Wheel.h"
+#include <math.h>
 namespace Steering{
     Steer::Steer(float axleTrack, const Wheel &leftWheel, const Wheel &rightWheel):
-        m_axleTrack(axleTrack), m_leftWheel(leftWheel), m_rightWheel(rightWheel){
+        m_axleTrack(axleTrack), m_leftWheel(leftWheel), m_rightWheel(rightWheel),
+        m_previousPose{0.0f, 0.0f, 0.0f}, m_currentPose{0.0f , 0.0f, 0.0f}{
     
         }
     
@@ -47,8 +49,18 @@ namespace Steering{
 
     float Steer::distanceTravelled(){
 
-        return (m_leftWheel.distance() + m_rightWheel.distance())/2.0;
+        return (m_leftWheel.distance() + m_rightWheel.distance())/2;
         
+    }
+
+    Pose Steer::getPose(){
+        m_previousPose = m_currentPose;
+        
+        m_currentPose.theta = m_previousPose.theta + (m_rightWheel.distance() - m_leftWheel.distance())/m_axleTrack;
+        m_currentPose.x = distanceTravelled()* sin(m_currentPose.theta) + m_previousPose.x;
+        m_currentPose.y = distanceTravelled()* cos(m_currentPose.theta) + m_previousPose.y;
+
+        return m_currentPose;
     }
 //namespace Steering
 };

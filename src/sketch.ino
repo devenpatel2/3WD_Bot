@@ -1,9 +1,9 @@
 #include <Steering.h>
 
 #include <ros.h>
-#include <std_msgs/Int16.h>
+#include<tf/tf.h>
+#include <geometry_msgs/Pose.h>
 #include <std_msgs/Float32.h>
-
 
 #define EncoderSlots 20
 
@@ -32,35 +32,40 @@ Steering::Wheel wheelRight(wheelRadius, mSettingsR, enSettingsR);
 Steering::Wheel wheelLeft(wheelRadius, mSettingsL, enSettingsL);
 
 Steering::Steer steer(axleTrack, wheelLeft, wheelRight);
+Steering::Pose pose; 
 
 ros::NodeHandle  nh;
-
-std_msgs::Int16 encoderMsg;
+geometry_msgs::Pose poseMsg;
 std_msgs::Float32 distanceMsg;
 
-ros::Publisher pubRightEncoder("right/encoder" ,  &encoderMsg);
-ros::Publisher pubLeftEncoder("left/encoder" ,  &encoderMsg);
 ros::Publisher pubRightWheel("right/distance" ,  &distanceMsg);
-ros::Publisher pubLeftWheel("left/distance" ,  &distanceMsg);
+ros::Publisher pubLeftWheel("left/distance" , &distanceMsg);
+ros::Publisher pubPose("odom" , &poseMsg); 
 
 bool forward = true;
 unsigned long previousMillis = 0;     
 const long interval = 2000;           
+
+void publishPoseMsg(const Steering::Pose &pose);
+
 void setup()
 { 
+    //Interrupt Setup
+    
     attachInterrupt(0, encoderRightISR, CHANGE); 
     attachInterrupt(1, encoderLeftISR, CHANGE); 
+    
+    //Ros setup
     nh.initNode();
-    nh.advertise(pubRightEncoder);
-    nh.advertise(pubLeftEncoder); 
+    nh.advertise(pubPose);
     nh.advertise(pubRightWheel);
     nh.advertise(pubLeftWheel); 
-
 
 }
 
 void loop(){
     unsigned long currentMillis = millis();
+
     if (currentMillis - previousMillis >= interval) {        
         previousMillis = currentMillis; 
         if (forward){
@@ -70,29 +75,23 @@ void loop(){
             forward = false;
         }
         else {
-            
             steer.stop();           
             delay(5);
             steer.reverse();           
             forward = true;
         }
     }
-    encoderMsg.data = wheelRight.encoder->count();
-    pubRightEncoder.publish(&encoderMsg);
-
-    encoderMsg.data = wheelLeft.encoder->count();
-    pubLeftEncoder.publish(&encoderMsg);
-
+    pose = steer.getPose();
+    publishPoseMsg(pose); 
+    
     distanceMsg.data = wheelRight.distance();
     pubRightWheel.publish(&distanceMsg);
 
     distanceMsg.data = wheelLeft.distance();
     pubLeftWheel.publish(&distanceMsg);
 
-
     nh.spinOnce();
-    delay(10);
-    
+    delay(20);
 }
 
 void encoderRightISR()
@@ -103,4 +102,19 @@ void encoderRightISR()
 void encoderLeftISR()
 {
     wheelLeft.encoder->isr();
+}
+
+void publishPoseMsg(const Steering::Pose &pose){
+    
+    //poseMsg.header.stamp = nh.now();  
+    //Euler angle to Quaternion 
+    geometry_msgs::Quaternion odom_quat = tf::createQuaternionFromYaw(pose.theta);
+
+    //set the position
+    poseMsg.position.x = pose.x;
+    poseMsg.position.y = pose.y;
+    poseMsg.orientation = odom_quat;
+
+    //publish the message
+    pubPose.publish(&poseMsg);
 }

@@ -27,9 +27,11 @@ Steering::MotorSettings mSettingsR = {E1, I1, I2};
 Steering::MotorSettings mSettingsL = {E2, I3, I4};
 
 float wheelRadius = 3.5;
+float axleTrack = 10.0; 
 Steering::Wheel wheelRight(wheelRadius, mSettingsR, enSettingsR);
 Steering::Wheel wheelLeft(wheelRadius, mSettingsL, enSettingsL);
 
+Steering::Steer steer(axleTrack, wheelLeft, wheelRight);
 
 ros::NodeHandle  nh;
 
@@ -62,20 +64,16 @@ void loop(){
     if (currentMillis - previousMillis >= interval) {        
         previousMillis = currentMillis; 
         if (forward){
-            wheelRight.stop();
-            wheelLeft.stop();
+            steer.stop();            
             delay(5);
-            wheelRight.forward();
-            wheelLeft.forward();
+            steer.forward();         
             forward = false;
         }
         else {
             
-            wheelRight.stop();
-            wheelLeft.stop();
+            steer.stop();           
             delay(5);
-            wheelLeft.reverse();
-            wheelRight.reverse();
+            steer.reverse();           
             forward = true;
         }
     }

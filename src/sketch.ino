@@ -106,7 +106,6 @@ void encoderLeftISR()
 
 void publishPoseMsg(const Steering::Pose &pose){
     
-    //poseMsg.header.stamp = nh.now();  
     //Euler angle to Quaternion 
     geometry_msgs::Quaternion odom_quat = tf::createQuaternionFromYaw(pose.theta);
 

@@ -26,7 +26,7 @@ namespace Steering{
         digitalWrite(m_mtSettings.input2, LOW);
     }
 
-    void Motor::forward(uchar speed){
+    void Motor::forward(int speed){
         if(encoder)
             encoder->setDirection(FORWARD);
         
@@ -44,7 +44,7 @@ namespace Steering{
         digitalWrite(m_mtSettings.input2, HIGH);
     }
 
-    void Motor::reverse(uchar speed){
+    void Motor::reverse(int speed){
         if(encoder)
             encoder->setDirection(REVERSE);
 

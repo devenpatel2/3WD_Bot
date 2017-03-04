@@ -11,9 +11,9 @@ namespace Steering{
             Motor(const MotorSettings motorSettings);
             ~Motor();
             void forward();
-            void forward(uchar speed);
+            void forward(int speed);
             void reverse();
-            void reverse(uchar speed);
+            void reverse(int speed);
             void stop();
             Encoder *encoder;
 

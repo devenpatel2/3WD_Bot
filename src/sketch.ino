@@ -58,8 +58,8 @@ void setup()
     //Ros setup
     nh.initNode();
     nh.advertise(pubPose);
-    nh.advertise(pubRightWheel);
-    nh.advertise(pubLeftWheel); 
+    //nh.advertise(pubRightWheel);
+    //nh.advertise(pubLeftWheel); 
 
 }
 
@@ -71,13 +71,13 @@ void loop(){
         if (forward){
             steer.stop();            
             delay(5);
-            steer.forward();         
+            steer.left();         
             forward = false;
         }
         else {
             steer.stop();           
             delay(5);
-            steer.reverse();           
+            steer.right();           
             forward = true;
         }
     }
@@ -85,10 +85,10 @@ void loop(){
     publishPoseMsg(pose); 
     
     distanceMsg.data = wheelRight.distance();
-    pubRightWheel.publish(&distanceMsg);
+    //pubRightWheel.publish(&distanceMsg);
 
     distanceMsg.data = wheelLeft.distance();
-    pubLeftWheel.publish(&distanceMsg);
+    //pubLeftWheel.publish(&distanceMsg);
 
     nh.spinOnce();
     delay(20);

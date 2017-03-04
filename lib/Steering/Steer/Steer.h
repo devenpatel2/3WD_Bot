@@ -7,9 +7,9 @@ namespace Steering{
         public:
             Steer(float axleTrack, const Wheel &leftWheel, const Wheel &rightWheel);
             void forward();
-            void forward(float distance);
+            void forward(int speed);
             void reverse();
-            void reverse(float distance);
+            void reverse(int speed);
             void left();
             void left(float angle);
             void right();
@@ -21,7 +21,7 @@ namespace Steering{
             
         private:
             Wheel m_leftWheel, m_rightWheel;
-            float m_axleTrack;
+            float m_axleTrack, m_prevDistanceL, m_previousDistanceR;
             Pose m_previousPose, m_currentPose;
             
     };

@@ -13,11 +13,9 @@ namespace Steering{
         m_rightWheel.forward();
     }
 
-    void Steer::forward(float distance){
-        float previousDistance = distanceTravelled();
-        while(previousDistance + distance > distanceTravelled()){
-            forward();
-        }
+    void Steer::forward(int speed){
+         m_leftWheel.forward(speed);
+        m_rightWheel.forward(speed);
     }
 
     void Steer::reverse(){
@@ -25,11 +23,9 @@ namespace Steering{
         m_rightWheel.reverse();
     }
 
-    void Steer::reverse(float distance){
-        float previousDistance = distanceTravelled();
-        while(previousDistance - distance < distanceTravelled()){
-            reverse();
-        }
+    void Steer::reverse(int speed){
+        m_leftWheel.reverse(speed);
+        m_rightWheel.reverse(speed);
     }
 
     void Steer::stop(){
@@ -54,7 +50,7 @@ namespace Steering{
     }
 
     Pose Steer::getPose(){
-        m_previousPose = m_currentPose;
+        //m_previousPose = m_currentPose;
         
         m_currentPose.theta = m_previousPose.theta + (m_rightWheel.distance() - m_leftWheel.distance())/m_axleTrack;
         m_currentPose.x = distanceTravelled()* sin(m_currentPose.theta) + m_previousPose.x;
@@ -62,5 +58,21 @@ namespace Steering{
 
         return m_currentPose;
     }
+    /*
+    Pose Steer::getPose(){
+        
+        m_previousPose = m_currentPose;
+        float distance = (m_previousDistanceL - m_previousDistanceR)/2;
+        
+        m_currentPose.theta = m_previousPose.theta + (m_previousDistanceL - m_previousDistanceR)/m_axleTrack;
+        m_currentPose.x = distance * sin(m_currentPose.theta) + m_previousPose.x;
+        m_currentPose.y = distance * cos(m_currentPose.theta) + m_previousPose.y;
+        
+        m_previousDistanceL = m_rightWheel.distance();
+        m_previousDistanceR = m_rightWheel.distance();        
+        
+        return m_currentPose;
+    }
+    */
 //namespace Steering
 };

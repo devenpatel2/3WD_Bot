@@ -1,6 +1,8 @@
 #include "Steer.h"
 #include "Wheel.h"
 #include <math.h>
+#include "Utils/utils.h"
+
 namespace Steering{
     Steer::Steer(float axleTrack, const Wheel &leftWheel, const Wheel &rightWheel):
         m_axleTrack(axleTrack), m_leftWheel(leftWheel), m_rightWheel(rightWheel),
@@ -32,7 +34,7 @@ namespace Steering{
         m_leftWheel.stop();
         m_rightWheel.stop();
     }
-
+    
     void Steer::left(){
         m_leftWheel.reverse();
         m_rightWheel.forward();
@@ -41,6 +43,16 @@ namespace Steering{
     void Steer::right(){
         m_rightWheel.reverse();
         m_leftWheel.forward();
+    }
+
+    void Steer::left(int speed){
+        m_leftWheel.reverse(speed);
+        m_rightWheel.forward(speed);
+    }
+    
+    void Steer::right(int speed){
+        m_rightWheel.reverse(speed);
+        m_leftWheel.forward(speed);
     }
 
     float Steer::distanceTravelled(){
@@ -58,6 +70,35 @@ namespace Steering{
 
         return m_currentPose;
     }
+    
+    void Steer::goToAngle(float targetHeading){
+        int gain = 0.5 ;
+        float error = targetHeading - getPose().theta;
+
+        if (error > M_PI)
+            error -= 2 * M_PI;
+        else if (error < -M_PI)
+            error += 2 * M_PI;
+
+        //Proportional controller
+        int controlSpeed = MAX_POWER - (int)(0.5 * m_abs(error)/MAX_ERROR  * MAX_POWER);
+        
+        while(error > 10){
+            if (error>0) 
+                left(controlSpeed);
+            else
+                right(controlSpeed);
+            
+            error = targetHeading - getPose().theta;
+        }
+    
+    }
+    
+    float Steer::m_abs(float value){
+    
+        return (value> 0) ? value : -1*value;
+    }
+ 
     /*
     Pose Steer::getPose(){
         

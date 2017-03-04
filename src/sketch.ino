@@ -84,14 +84,14 @@ void loop(){
     pose = steer.getPose();
     publishPoseMsg(pose); 
     
-    distanceMsg.data = wheelRight.distance();
+    //distanceMsg.data = wheelRight.distance();
     //pubRightWheel.publish(&distanceMsg);
 
-    distanceMsg.data = wheelLeft.distance();
+    //distanceMsg.data = wheelLeft.distance();
     //pubLeftWheel.publish(&distanceMsg);
 
     nh.spinOnce();
-    delay(20);
+    delay(10);
 }
 
 void encoderRightISR()

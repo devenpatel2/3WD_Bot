@@ -1,5 +1,8 @@
 #pragma once
-# define M_PI           3.14152 /* pi */
+# define M_PI 3.14152 /* pi */
+# define MAX_POWER  255
+# define MAX_ERROR 2*M_PI
+# define MAX_GAIN 10
 typedef unsigned char uchar;
 
 namespace Steering{

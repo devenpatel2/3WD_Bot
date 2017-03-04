@@ -10,19 +10,20 @@ namespace Steering{
             void forward(int speed);
             void reverse();
             void reverse(int speed);
+            void left(int speed);
             void left();
-            void left(float angle);
+            void right(int speed);
             void right();
-            void right(float angle);
             void stop();
             float distanceTravelled();
-            float angle();
+            void goToAngle(float targetHeading);
             Pose getPose();
             
         private:
             Wheel m_leftWheel, m_rightWheel;
             float m_axleTrack, m_prevDistanceL, m_previousDistanceR;
             Pose m_previousPose, m_currentPose;
+            float m_abs(float value);
             
     };
 //namespace Steering

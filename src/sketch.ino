@@ -26,8 +26,8 @@ Steering::EncoderSettings enSettingsL = {LeftEncoderPin, EncoderSlots};
 Steering::MotorSettings mSettingsR = {E1, I1, I2};
 Steering::MotorSettings mSettingsL = {E2, I3, I4};
 
-float wheelRadius = 3.5;
-float axleTrack = 10.0; 
+float wheelRadius = 3.25;
+float axleTrack = 12.0; 
 Steering::Wheel wheelRight(wheelRadius, mSettingsR, enSettingsR);
 Steering::Wheel wheelLeft(wheelRadius, mSettingsL, enSettingsL);
 
@@ -68,8 +68,8 @@ void setup()
 
 void loop(){
     unsigned long currentMillis = millis();
-
-    if (currentMillis - previousMillis >= interval) {        
+    steer.forward();
+    /*if (currentMillis - previousMillis >= interval) {        
         previousMillis = currentMillis; 
         if (forward){
             steer.stop();            
@@ -85,17 +85,17 @@ void loop(){
             //delay(1000);
             forward = true;
         }
-    }
+    }*/
     pose = steer.getPose();
     //publishPoseMsg(pose); 
-    distance_L += wheelLeft.deltaDistance();   
     headingMsg.data = pose.theta * (180/M_PI); 
     pubHeading.publish(&headingMsg);
 
+    distance_L = wheelLeft.distance();   
     headingMsg.data = distance_L; 
     pubLeftDistance.publish(&headingMsg);
 
-    distance_R = wheelLeft.distance();   
+    distance_R = wheelRight.distance();   
     headingMsg.data = distance_R; 
     pubRightDistance.publish(&headingMsg);
 

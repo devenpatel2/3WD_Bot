@@ -64,13 +64,13 @@ namespace Steering{
     Pose Steer::getPose(){
         
         m_currentPose.theta = m_previousPose.theta + (m_rightWheel.deltaDistance() - m_leftWheel.deltaDistance())/m_axleTrack;
-        /*
+       /* 
         // limit heading to -Pi <= heading < Pi
         if (m_currentPose.theta > M_PI)
             m_currentPose.theta -= 2 * M_PI;
         else if (m_currentPose.theta <= -M_PI)
             m_currentPose.theta += 2 * M_PI;
-       */ 
+        */
         m_currentPose.x = deltaDistanceTravelled()* sin(m_currentPose.theta) + m_previousPose.x;
         m_currentPose.y = deltaDistanceTravelled()* cos(m_currentPose.theta) + m_previousPose.y;
 

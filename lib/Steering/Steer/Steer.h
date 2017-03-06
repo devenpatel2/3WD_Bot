@@ -15,7 +15,7 @@ namespace Steering{
             void right(int speed);
             void right();
             void stop();
-            float distanceTravelled();
+            float deltaDistanceTravelled();
             void goToAngle(float targetHeading);
             Pose getPose();
             
@@ -24,7 +24,7 @@ namespace Steering{
             float m_axleTrack, m_prevDistanceL, m_previousDistanceR;
             Pose m_previousPose, m_currentPose;
             float m_abs(float value);
-            
+            float m_previousDistance; 
     };
 //namespace Steering
 };

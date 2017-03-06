@@ -16,11 +16,12 @@ namespace Steering{
 
            m_rotating = false;  // no more debouncing until loop() hits again
         }  
-     
+        //Keep count only for deltaTime
     }
 
     Encoder::Encoder(const EncoderSettings encoderSetting)
-    :m_count(0), m_lastCount(1), m_rotating(false), m_isr_set(false), m_pin(encoderSetting.encoderPin), m_direction(FORWARD){
+    :m_count(0), m_lastCount(1), m_rotating(false), m_isr_set(false), m_pin(encoderSetting.encoderPin),
+    m_direction(FORWARD), m_currentTime(millis()), m_previousTime(0), m_deltaTime(100){
         
         pinMode(m_pin, INPUT); 
         // turn on pullup resistors
@@ -29,10 +30,17 @@ namespace Steering{
     }
 
     int Encoder::count(){
+        m_currentTime = millis();
        m_rotating = true;  // reset the debouncer
             if (m_lastCount != m_count) {
            m_lastCount = m_count;
         }
+        /*
+        if (m_currentTime - m_previousTime > m_deltaTime){
+            m_previousTime = m_currentTime;
+            resetCount();
+        }
+        */
         return (int)m_count;
     }
 

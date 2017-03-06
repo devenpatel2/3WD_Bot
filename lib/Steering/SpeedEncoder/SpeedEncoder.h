@@ -22,7 +22,9 @@ namespace Steering{
             volatile Direction m_direction;
             bool m_rotating;
             bool m_isr_set;
-        
+            long m_currentTime;
+            long m_previousTime;
+            long m_deltaTime;        
     };
 // namespace Steering
 };

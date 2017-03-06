@@ -11,10 +11,12 @@ namespace Steering{
             //for wheel without encoder
             Wheel(float radius, MotorSettings motorSettings);
             float distance();
+            float deltaDistance();
 
         private :
 
             float m_distancePerRevolution;
+            float m_previousEncoderCount;
     };
 // namespace Steering
 };

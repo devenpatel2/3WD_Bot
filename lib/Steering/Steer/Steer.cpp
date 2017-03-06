@@ -55,19 +55,26 @@ namespace Steering{
         m_leftWheel.forward(speed);
     }
 
-    float Steer::distanceTravelled(){
+    float Steer::deltaDistanceTravelled(){
 
-        return (m_leftWheel.distance() + m_rightWheel.distance())/2;
+        return (m_leftWheel.deltaDistance() + m_rightWheel.deltaDistance())/2;
         
     }
 
     Pose Steer::getPose(){
-        //m_previousPose = m_currentPose;
         
-        m_currentPose.theta = m_previousPose.theta + (m_rightWheel.distance() - m_leftWheel.distance())/m_axleTrack;
-        m_currentPose.x = distanceTravelled()* sin(m_currentPose.theta) + m_previousPose.x;
-        m_currentPose.y = distanceTravelled()* cos(m_currentPose.theta) + m_previousPose.y;
+        m_currentPose.theta = m_previousPose.theta + (m_rightWheel.deltaDistance() - m_leftWheel.deltaDistance())/m_axleTrack;
+        /*
+        // limit heading to -Pi <= heading < Pi
+        if (m_currentPose.theta > M_PI)
+            m_currentPose.theta -= 2 * M_PI;
+        else if (m_currentPose.theta <= -M_PI)
+            m_currentPose.theta += 2 * M_PI;
+       */ 
+        m_currentPose.x = deltaDistanceTravelled()* sin(m_currentPose.theta) + m_previousPose.x;
+        m_currentPose.y = deltaDistanceTravelled()* cos(m_currentPose.theta) + m_previousPose.y;
 
+        m_previousPose = m_currentPose;
         return m_currentPose;
     }
     

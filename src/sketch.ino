@@ -36,10 +36,11 @@ Steering::Pose pose;
 
 ros::NodeHandle  nh;
 geometry_msgs::Pose poseMsg;
-std_msgs::Float32 distanceMsg;
+std_msgs::Float32 headingMsg;
 
-ros::Publisher pubRightWheel("right/distance" ,  &distanceMsg);
-ros::Publisher pubLeftWheel("left/distance" , &distanceMsg);
+ros::Publisher pubHeading("heading" ,  &headingMsg);
+ros::Publisher pubLeftDistance("left/distance" ,  &headingMsg);
+ros::Publisher pubRightDistance("right/distance" ,  &headingMsg);
 ros::Publisher pubPose("odom" , &poseMsg); 
 
 bool forward = true;
@@ -47,7 +48,8 @@ unsigned long previousMillis = 0;
 const long interval = 2000;           
 
 void publishPoseMsg(const Steering::Pose &pose);
-
+float distance_L = 0;
+float distance_R = 0;
 void setup()
 { 
     //Interrupt Setup
@@ -58,8 +60,9 @@ void setup()
     //Ros setup
     nh.initNode();
     nh.advertise(pubPose);
-    //nh.advertise(pubRightWheel);
-    //nh.advertise(pubLeftWheel); 
+    nh.advertise(pubHeading);
+    nh.advertise(pubLeftDistance); 
+    nh.advertise(pubRightDistance); 
 
 }
 
@@ -70,22 +73,32 @@ void loop(){
         previousMillis = currentMillis; 
         if (forward){
             steer.stop();            
-            delay(5);
-            steer.left();         
+            //delay(1000);
+            steer.forward();         
+            //delay(1000);
             forward = false;
         }
         else {
             steer.stop();           
-            delay(5);
-            steer.right();           
+            delay(1000);
+            steer.forward();          
+            //delay(1000);
             forward = true;
         }
     }
     pose = steer.getPose();
-    publishPoseMsg(pose); 
-    
-    //distanceMsg.data = wheelRight.distance();
-    //pubRightWheel.publish(&distanceMsg);
+    //publishPoseMsg(pose); 
+    distance_L += wheelLeft.deltaDistance();   
+    headingMsg.data = pose.theta * (180/M_PI); 
+    pubHeading.publish(&headingMsg);
+
+    headingMsg.data = distance_L; 
+    pubLeftDistance.publish(&headingMsg);
+
+    distance_R = wheelLeft.distance();   
+    headingMsg.data = distance_R; 
+    pubRightDistance.publish(&headingMsg);
+
 
     //distanceMsg.data = wheelLeft.distance();
     //pubLeftWheel.publish(&distanceMsg);

@@ -30,17 +30,11 @@ namespace Steering{
     }
 
     int Encoder::count(){
-        m_currentTime = millis();
        m_rotating = true;  // reset the debouncer
             if (m_lastCount != m_count) {
            m_lastCount = m_count;
         }
-        /*
-        if (m_currentTime - m_previousTime > m_deltaTime){
-            m_previousTime = m_currentTime;
-            resetCount();
-        }
-        */
+        
         return (int)m_count;
     }
 

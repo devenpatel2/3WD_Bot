@@ -1,5 +1,5 @@
 #include <Steering.h>
-
+#include <Utils/utils.h>
 #include <ros.h>
 #include<tf/tf.h>
 #include <geometry_msgs/Pose.h>
@@ -32,7 +32,6 @@ Steering::Wheel wheelRight(wheelRadius, mSettingsR, enSettingsR);
 Steering::Wheel wheelLeft(wheelRadius, mSettingsL, enSettingsL);
 
 Steering::Steer steer(axleTrack, wheelLeft, wheelRight);
-Steering::Pose pose; 
 
 ros::NodeHandle  nh;
 geometry_msgs::Pose poseMsg;
@@ -50,13 +49,13 @@ const long interval = 2000;
 void publishPoseMsg(const Steering::Pose &pose);
 float distance_L = 0;
 float distance_R = 0;
+float currentHeading = 0;
 void setup()
 { 
     //Interrupt Setup
     
     attachInterrupt(0, encoderRightISR, CHANGE); 
     attachInterrupt(1, encoderLeftISR, CHANGE); 
-    
     //Ros setup
     nh.initNode();
     nh.advertise(pubPose);
@@ -67,8 +66,9 @@ void setup()
 }
 
 void loop(){
-    unsigned long currentMillis = millis();
-    steer.forward();
+    Steering::Pose pose; 
+    //unsigned long currentMillis = millis();
+    //steer.forward();
     /*if (currentMillis - previousMillis >= interval) {        
         previousMillis = currentMillis; 
         if (forward){
@@ -86,11 +86,19 @@ void loop(){
             forward = true;
         }
     }*/
+    
     pose = steer.getPose();
-    //publishPoseMsg(pose); 
+    int theta_deg = pose.theta * 180/M_PI;
+    if ( theta_deg > 10 or theta_deg < -10 ){
+        steer.maintainHeading(0);
+    } 
+    else
+      steer.forward();
+    
+    publishPoseMsg(pose); 
     headingMsg.data = pose.theta * (180/M_PI); 
     pubHeading.publish(&headingMsg);
-
+    
     distance_L = wheelLeft.distance();   
     headingMsg.data = distance_L; 
     pubLeftDistance.publish(&headingMsg);
@@ -105,6 +113,7 @@ void loop(){
 
     nh.spinOnce();
     delay(10);
+
 }
 
 void encoderRightISR()

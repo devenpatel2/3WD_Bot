@@ -17,6 +17,7 @@ namespace Steering{
             void stop();
             float deltaDistanceTravelled();
             void goToAngle(float targetHeading);
+            void maintainHeading(float heading);
             Pose getPose();
             
         private:
@@ -25,6 +26,8 @@ namespace Steering{
             Pose m_previousPose, m_currentPose;
             float m_abs(float value);
             float m_previousDistance; 
+            float m_movingArray[MA_LENGTH];
+            float m_movingAverage(float currentTheta );
     };
 //namespace Steering
 };

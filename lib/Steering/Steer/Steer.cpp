@@ -6,7 +6,8 @@
 namespace Steering{
     Steer::Steer(float axleTrack, const Wheel &leftWheel, const Wheel &rightWheel):
         m_axleTrack(axleTrack), m_leftWheel(leftWheel), m_rightWheel(rightWheel),
-        m_previousPose{0.0f, 0.0f, 0.0f}, m_currentPose{0.0f , 0.0f, 0.0f}{
+        m_previousPose{0.0f, 0.0f, 0.0f}, m_currentPose{0.0f , 0.0f, 0.0f},
+        m_movingArray{0,0,0,0,0}{
     
         }
     
@@ -63,21 +64,37 @@ namespace Steering{
 
     Pose Steer::getPose(){
         
-        m_currentPose.theta = m_previousPose.theta + (m_rightWheel.deltaDistance() - m_leftWheel.deltaDistance())/m_axleTrack;
-       /* 
+        m_currentPose.theta = m_previousPose.theta + (m_rightWheel.distance() - m_leftWheel.distance())/m_axleTrack;
+         
         // limit heading to -Pi <= heading < Pi
         if (m_currentPose.theta > M_PI)
             m_currentPose.theta -= 2 * M_PI;
         else if (m_currentPose.theta <= -M_PI)
             m_currentPose.theta += 2 * M_PI;
-        */
+        
+        m_currentPose.theta = m_movingAverage(m_currentPose.theta);
         m_currentPose.x = deltaDistanceTravelled()* sin(m_currentPose.theta) + m_previousPose.x;
         m_currentPose.y = deltaDistanceTravelled()* cos(m_currentPose.theta) + m_previousPose.y;
-
-        m_previousPose = m_currentPose;
+          
+        //m_previousPose = m_currentPose;
         return m_currentPose;
     }
-    
+   
+      
+   void Steer::maintainHeading(float heading){
+        
+        float error = heading - getPose().theta ;
+        
+        float diff = 9 * error /(M_PI/2) * 255 ;  
+        if (diff < 180)
+            diff =180;
+        
+        if (error < 0)
+           m_rightWheel.forward(diff);
+        else
+           m_leftWheel.forward(diff); 
+                
+    } 
     void Steer::goToAngle(float targetHeading){
         int gain = 0.5 ;
         float error = targetHeading - getPose().theta;
@@ -105,22 +122,20 @@ namespace Steering{
     
         return (value> 0) ? value : -1*value;
     }
- 
-    /*
-    Pose Steer::getPose(){
+   
+    float Steer::m_movingAverage(float currentTheta){
+   
+        float tempStore, sum = 0;
         
-        m_previousPose = m_currentPose;
-        float distance = (m_previousDistanceL - m_previousDistanceR)/2;
-        
-        m_currentPose.theta = m_previousPose.theta + (m_previousDistanceL - m_previousDistanceR)/m_axleTrack;
-        m_currentPose.x = distance * sin(m_currentPose.theta) + m_previousPose.x;
-        m_currentPose.y = distance * cos(m_currentPose.theta) + m_previousPose.y;
-        
-        m_previousDistanceL = m_rightWheel.distance();
-        m_previousDistanceR = m_rightWheel.distance();        
-        
-        return m_currentPose;
-    }
-    */
-//namespace Steering
+        for(int i = 1; i<MA_LENGTH; i++){
+            tempStore = m_movingArray[i];
+            m_movingArray[i-1] = tempStore;
+            sum += tempStore;   
+        }
+        m_movingArray[MA_LENGTH -1 ] = currentTheta ; 
+        sum += currentTheta ; 
+        return sum/MA_LENGTH;
+    } 
+
+ //namespace Steering
 };

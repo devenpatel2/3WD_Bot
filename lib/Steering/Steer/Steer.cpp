@@ -7,13 +7,13 @@ namespace Steering{
     Steer::Steer(float axleTrack, const Wheel &leftWheel, const Wheel &rightWheel):
         m_axleTrack(axleTrack), m_leftWheel(leftWheel), m_rightWheel(rightWheel),
         m_previousPose{0.0f, 0.0f, 0.0f}, m_currentPose{0.0f , 0.0f, 0.0f},
-        m_movingArray{0,0,0,0,0}{
+        m_movingArray{0,0,0,0,0}, m_diff(0){
     
         }
     
     void Steer::forward(){
-        m_leftWheel.forward();
         m_rightWheel.forward();
+        m_leftWheel.forward();
     }
 
     void Steer::forward(int speed){
@@ -63,9 +63,8 @@ namespace Steering{
     }
 
     Pose Steer::getPose(){
-        
+        ///Pose pose = {0,0,0};
         m_currentPose.theta = m_previousPose.theta + (m_rightWheel.distance() - m_leftWheel.distance())/m_axleTrack;
-         
         // limit heading to -Pi <= heading < Pi
         if (m_currentPose.theta > M_PI)
             m_currentPose.theta -= 2 * M_PI;
@@ -80,21 +79,25 @@ namespace Steering{
         return m_currentPose;
     }
    
-      
+   float Steer::getDiff(){
+        return m_diff;
+   }
    void Steer::maintainHeading(float heading){
         
         float error = heading - getPose().theta ;
-        
-        float diff = 9 * error /(M_PI/2) * 255 ;  
-        if (diff < 180)
-            diff =180;
-        
-        if (error < 0)
-           m_rightWheel.forward(diff);
-        else
-           m_leftWheel.forward(diff); 
-                
-    } 
+        float diff = 100* error/(M_PI) ;  
+        if( diff < -50) diff = -50;
+        if( diff > 50) diff = 50;
+        float diff_l = 200 - diff ;  
+        float diff_r = 200 + diff;
+        m_diff = error;
+        //if (error < 0){  //turn right
+        //else{ //turn left
+           m_leftWheel.forward(int(diff_l));
+           m_rightWheel.forward(int(diff_r));
+           
+    }
+
     void Steer::goToAngle(float targetHeading){
         int gain = 0.5 ;
         float error = targetHeading - getPose().theta;
@@ -105,7 +108,7 @@ namespace Steering{
             error += 2 * M_PI;
 
         //Proportional controller
-        int controlSpeed = MAX_POWER - (int)(0.5 * m_abs(error)/MAX_ERROR  * MAX_POWER);
+        int controlSpeed = MAX_SPEED - (int)(0.5 * m_abs(error)/MAX_ERROR  * MAX_SPEED);
         
         while(error > 10){
             if (error>0) 

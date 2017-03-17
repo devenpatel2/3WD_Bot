@@ -1,10 +1,11 @@
 #include <Steering.h>
 #include <Utils/utils.h>
 #include <ros.h>
+#include <std_msgs/Float32.h>
+/*
 #include<tf/tf.h>
 #include <geometry_msgs/Pose.h>
-#include <std_msgs/Float32.h>
-
+*/
 #define EncoderSlots 20
 
 //RIGHT MOTOR
@@ -27,29 +28,31 @@ Steering::MotorSettings mSettingsR = {E1, I1, I2};
 Steering::MotorSettings mSettingsL = {E2, I3, I4};
 
 float wheelRadius = 3.25;
-float axleTrack = 12.0; 
+float axleTrack = 14.5; 
 Steering::Wheel wheelRight(wheelRadius, mSettingsR, enSettingsR);
 Steering::Wheel wheelLeft(wheelRadius, mSettingsL, enSettingsL);
 
 Steering::Steer steer(axleTrack, wheelLeft, wheelRight);
-
 ros::NodeHandle  nh;
-geometry_msgs::Pose poseMsg;
 std_msgs::Float32 headingMsg;
-
 ros::Publisher pubHeading("heading" ,  &headingMsg);
 ros::Publisher pubLeftDistance("left/distance" ,  &headingMsg);
 ros::Publisher pubRightDistance("right/distance" ,  &headingMsg);
-ros::Publisher pubPose("odom" , &poseMsg); 
+const long interval = 2000;           
+long int previousTime = 0;           
+/*
+geometry_msgs::Pose poseMsg;
 
+ros::Publisher pubPose("odom" , &poseMsg); 
 bool forward = true;
 unsigned long previousMillis = 0;     
-const long interval = 2000;           
 
 void publishPoseMsg(const Steering::Pose &pose);
 float distance_L = 0;
 float distance_R = 0;
 float currentHeading = 0;
+Steering::Pose pose ; 
+*/
 void setup()
 { 
     //Interrupt Setup
@@ -58,62 +61,42 @@ void setup()
     attachInterrupt(1, encoderLeftISR, CHANGE); 
     //Ros setup
     nh.initNode();
-    nh.advertise(pubPose);
     nh.advertise(pubHeading);
     nh.advertise(pubLeftDistance); 
     nh.advertise(pubRightDistance); 
-
+    /*
+    nh.advertise(pubPose);
+    */
 }
 
 void loop(){
-    Steering::Pose pose; 
-    //unsigned long currentMillis = millis();
-    //steer.forward();
-    /*if (currentMillis - previousMillis >= interval) {        
-        previousMillis = currentMillis; 
-        if (forward){
-            steer.stop();            
-            //delay(1000);
-            steer.forward();         
-            //delay(1000);
-            forward = false;
-        }
-        else {
-            steer.stop();           
-            delay(1000);
-            steer.forward();          
-            //delay(1000);
-            forward = true;
-        }
-    }*/
+	    
+	Steering::Pose pose; 
+    if(millis() - previousTime > interval){
+		steer.maintainHeading(0.0);
+    //steer.forward(150);
+	pose = steer.getPose();
     
-    pose = steer.getPose();
-    int theta_deg = pose.theta * 180/M_PI;
-    if ( theta_deg > 10 or theta_deg < -10 ){
-        steer.maintainHeading(0);
-    } 
-    else
-      steer.forward();
-    
-    publishPoseMsg(pose); 
-    headingMsg.data = pose.theta * (180/M_PI); 
+    //publishPoseMsg(pose); 
+    headingMsg.data = steer.getDiff();//pose.theta * (180/M_PI); 
     pubHeading.publish(&headingMsg);
     
-    distance_L = wheelLeft.distance();   
-    headingMsg.data = distance_L; 
+    headingMsg.data = wheelLeft.distance();   
     pubLeftDistance.publish(&headingMsg);
 
-    distance_R = wheelRight.distance();   
-    headingMsg.data = distance_R; 
+    headingMsg.data = wheelRight.distance();   
     pubRightDistance.publish(&headingMsg);
 
+		previousTime = millis();
+	}
 
+    /*
     //distanceMsg.data = wheelLeft.distance();
     //pubLeftWheel.publish(&distanceMsg);
 
+    */
     nh.spinOnce();
     delay(10);
-
 }
 
 void encoderRightISR()
@@ -125,7 +108,7 @@ void encoderLeftISR()
 {
     wheelLeft.encoder->isr();
 }
-
+/*
 void publishPoseMsg(const Steering::Pose &pose){
     
     //Euler angle to Quaternion 
@@ -139,3 +122,4 @@ void publishPoseMsg(const Steering::Pose &pose){
     //publish the message
     pubPose.publish(&poseMsg);
 }
+*/
